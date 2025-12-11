@@ -1,0 +1,130 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: [
+    ":preserveSemverRanges",
+    ":semanticCommitsDisabled",
+    ":separateMajorReleases",
+    "config:recommended",
+    "helpers:pinGitHubActionDigests",
+  ],
+  commitMessagePrefix: "deps:",
+  commitMessageAction: "update",
+  dependencyDashboardApproval: true,
+  addLabels: [ "dependencies" ],
+  postUpdateOptions: [
+    "gomodTidy",
+    "gomodUpdateImportPaths",
+  ],
+  nix: { enabled: true },
+  npm: { enabled: true },
+  lockFileMaintenance: {
+    enabled: true,
+    schedule: [ "before 4am" ],
+  },
+  packageRules: [
+    {
+      // Group lockfile maintenance updates by manager.
+      // https://github.com/renovatebot/renovate/discussions/28068
+      matchUpdateTypes: [ "lockFileMaintenance" ],
+      additionalBranchPrefix: "{{manager}}-",
+      commitMessageAction: "update",
+      commitMessageExtra: "{{manager}} lock file",
+    },
+    {
+      // Enable update of indirect Go dependencies.
+      // This rule should not be confused with the grouping of
+      // indirect Go dependencies further down.
+      matchManagers: [ "gomod" ],
+      matchDepTypes: [ "indirect" ],
+      enabled: true,
+    },
+    {
+      // Group update of indirect Go dependencies.
+      groupName: "Go indirect dependencies",
+      matchManagers: [ "gomod" ],
+      matchDepTypes: [ "indirect" ],
+      matchUpdateTypes: [
+        "digest",
+        "minor",
+        "patch",
+      ],
+      prPriority: -30, // Lower priority, higher risk of causing breakage.
+    },
+    {
+      // Disable major upgrades for indirect Go dependencies.
+      matchManagers: [ "gomod" ],
+      matchDepTypes: [ "indirect" ],
+      matchUpdateTypes: [ "major" ],
+      enabled: false,
+    },
+    {
+      // Group update of direct Go dependencies.
+      groupName: "Go dependencies",
+      matchManagers: [ "gomod" ],
+      matchDepTypes: [ "require" ],
+      matchUpdateTypes: [
+        "digest",
+        "minor",
+        "patch",
+      ],
+    },
+    {
+      // Disable Go toolchain directive updates in go.mod.
+      // These don't make any sense, we use the toolchain available in nixpkgs.
+      matchManagers: [ "gomod" ],
+      matchDepNames: [ "toolchain" ],
+      enabled: false,
+    },
+    {
+      // Group update of GitHub actions dependencies.
+      matchManagers: [ "github-actions" ],
+      groupName: "GitHub action dependencies",
+      matchUpdateTypes: [
+        "bump",
+        "digest",
+        "lockFileMaintenance",
+        "minor",
+        "patch",
+        "pin",
+        "pinDigest",
+        "rollback",
+      ],
+    },
+    {
+      // Group update of Terraform dependencies.
+      groupName: "Terraform dependencies",
+      matchManagers: [ "terraform" ],
+      matchUpdateTypes: [
+        "bump",
+        "digest",
+        "lockFileMaintenance",
+        "minor",
+        "patch",
+        "pin",
+        "pinDigest",
+        "rollback",
+      ],
+    },
+    {
+      // Disable updating of locally-replaced dependencies.
+      matchPackageNames: [
+        "github.com/edgelesssys/contrast",
+        "github.com/edgelesssys/contrast/imagepuller",
+        "github.com/edgelesssys/contrast/tools/igvm",
+        "github.com/edgelesssys/contrast/tools/imagepuller-benchmark",
+      ],
+      enabled: false,
+    },
+  ],
+  customManagers: [
+    {
+      // Update k3s version for bare metal runners.
+      customType: "regex",
+      managerFilePatterns: [ "(^|\\/)tools\\/bm-maintenance\\/k3s-version\\.txt$" ],
+      matchStrings: [ "^(?<currentValue>.*)$" ],
+      depNameTemplate: "k3s-io/k3s",
+      datasourceTemplate: "github-releases",
+      versioningTemplate: "loose",
+    },
+  ],
+}
