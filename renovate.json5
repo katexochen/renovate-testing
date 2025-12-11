@@ -121,7 +121,7 @@
       // Update k3s version for bare metal runners.
       customType: "regex",
       fileMatch: [ ".*txt" ],
-      matchStrings: [ "^(?<currentValue>.*)$" ],
+      matchStrings: [ "(?<currentValue>.*)" ],
       depNameTemplate: "k3s-io/k3s",
       datasourceTemplate: "github-releases",
       versioningTemplate: "loose",
