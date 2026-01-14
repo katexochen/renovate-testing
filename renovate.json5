@@ -128,6 +128,7 @@
       currentValueTemplate: "{{ currentValue }}",
       datasourceTemplate: "{{ datasource }}",
       versioningTemplate: "{{ versioning }}",
+	  registryUrlTemplate: "{{ registryUrl }}",
     },
   ],
 }

@@ -9,6 +9,7 @@
 		"depName": "nvidia/gpu-operator",
 		"currentValue": "v25.10.1",
 		"datasource": "helm",
-		"versioning": "semver"
+		"versioning": "semver",
+		"registryUrl": "https://helm.ngc.nvidia.com/nvidia"
 	}
 }
