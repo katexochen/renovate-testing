@@ -6,7 +6,7 @@
 		"versioning": "loose"
 	},
     "gpu-operator": {
-		"depName": "nvidia/gpu-operator",
+		"depName": "gpu-operator",
 		"currentValue": "v25.10.1",
 		"datasource": "helm",
 		"versioning": "semver",

@@ -116,7 +116,6 @@
       enabled: false,
     },
   ],
-  registryAliases: { nvidia: "https://helm.ngc.nvidia.com/nvidia" },
   customManagers: [
     {
       // Update tool versions for bare metal runners.
