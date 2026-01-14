@@ -122,7 +122,7 @@
       // Update tool versions for bare metal runners.
       customType: "jsonata",
       fileFormat: "json",
-      managerFilePatterns: [ "/bm-maintenance\\/versions\\.json$/" ],
+      managerFilePatterns: [ "/tools\\/bm-maintenance\\/versions\\.json$/" ],
 	  matchStrings: [ "$.*" ],
       depNameTemplate: "{{ depName }}",
       currentValueTemplate: "{{ currentValue }}",
